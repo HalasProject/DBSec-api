@@ -1,43 +1,26 @@
 import mongoose from "mongoose";
 
 export type TestDocument = mongoose.Document & {
-    title: string;
-    description?: string;
-    
-    sql?: string;
-    result:{
-        good?: string;
-        worst?: string;
-    }
-    enabled: boolean;
-    database: {
-        type: string;
-        version: string;
-    };
-    read_more?: string;
-    
-    // comparePassword: comparePasswordFunction;
-    // gravatar: (size: number) => string;
+    uuid: string,
+    section_id: string,
+    module_id: string,
+    resultat: string,
 };
 
 const TestSchema = new mongoose.Schema<TestDocument>(
     {
-        title: String,
-        description: String,
-        
-        sql: String,
-        result:{
-            good: String,
-            worst: String
+        uuid: String,
+        section_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref:"Section"
         },
-
-        enabled: Boolean,
-        database: {
-            type: String,
-            version: String
-        }
+        module_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref:"Module"
+        },
+        resultat: String,
     },
-    { timestamps: true, typeKey: "$type"},
+    { timestamps: true},
 );
 
 

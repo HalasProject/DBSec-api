@@ -1,12 +1,12 @@
 "use strict";
 
 import { Response, Request, NextFunction } from "express";
-import { Section,SectionDocument } from "../models/Section";
+import { Module,ModuleDocument } from "../models/Module";
 import { CallbackError, NativeError } from "mongoose";
 
 
 /**
- * Display information of one section.
+ * Display information of one module.
  *  @param  {Request} req
   * @param  {Response} res
   * @param  {NextFunction} next
@@ -14,9 +14,9 @@ import { CallbackError, NativeError } from "mongoose";
 export const one = (req: Request, res: Response,next: NextFunction) => {
     try {
         const id = req.params.id;
-        Section.findById(id, (err: NativeError, section: SectionDocument) => {
+        Module.findById(id, (err: NativeError, module: ModuleDocument) => {
             if (err) { return next(err); }
-            return res.status(200).json(section);
+            return res.status(200).json({data: module});
         });
             
     } catch (e) {
@@ -25,15 +25,15 @@ export const one = (req: Request, res: Response,next: NextFunction) => {
 };
 
 /**
- * List all sections;
+ * List all modules;
  * @param  {Request} req
  * @param  {Response} res
 */
-export const all = async (req: Request, res: Response,next: NextFunction)  => {
+export const all = async (req: Request, res: Response,next: NextFunction) => {
     try {
-        Section.find({}, (err, sections:SectionDocument[]) => {
+        Module.find({}, (err, modules:ModuleDocument[]) => {
             if (err) { return next(err); }
-            return res.status(200).json({ data: sections });
+            return res.status(200).json({ data: modules });
         });
     } catch (e) {
         return res.status(500).send(e.message);
@@ -41,7 +41,7 @@ export const all = async (req: Request, res: Response,next: NextFunction)  => {
 };
 
 /**
- * Create new section.
+ * Create new module.
  *  @param  {Request} req
   * @param  {Response} res
   * @param  {NextFunction} next
@@ -49,9 +49,10 @@ export const all = async (req: Request, res: Response,next: NextFunction)  => {
 export const create = (req: Request, res: Response,next: NextFunction) => {
     const { data } = req.body;
     try {
-        Section.create(data, function (err:NativeError, section:SectionDocument) {
+        console.log(data);
+        Module.create(data, function (err:NativeError, module:ModuleDocument) {
             if (err) { return next(err); }
-            return res.status(200).json(section);
+            return res.status(200).json(module);
         });
     } catch (e) {
         return res.status(500).send(e.message);
@@ -59,18 +60,18 @@ export const create = (req: Request, res: Response,next: NextFunction) => {
 };
 
 /**
- * Delete existing section with id.
+ * Delete existing module with id.
  *  @param  {Request} req
   * @param  {Response} res
  */
 export const destroy = (req: Request, res: Response) => {
     try {
         const id = req.params.id;
-        Section.remove({ _id: id },(function(err) {
+        Module.remove({ _id: id },(function(err) {
             if (!err) {
-                return res.status(200).json({ message: "Section deleted successfully" });
+                return res.status(200).json({ message: "Module deleted successfully" });
             } else {
-                return res.status(400).json({ message: "Cannot delete section",error: err.message });
+                return res.status(400).json({ message: "Cannot delete module",error: err.message });
             }
         }));
     } catch (e) {
@@ -79,7 +80,7 @@ export const destroy = (req: Request, res: Response) => {
 };
 
 /**
-  * Update existing section.
+  * Update existing module.
   * @param  {Request} req
   * @param  {Response} res
   * @param  {NextFunction} next
@@ -88,9 +89,10 @@ export const destroy = (req: Request, res: Response) => {
     try {
         const id  = req.params.id;
         const { data } = req.body;
-        await Section.findOneAndUpdate({_id:id},{...data},{new: true},function (err, result) {
+        await Module.findOneAndUpdate({_id:id},{...data},{new: true},function (err, result) {
             if (err) { return next(err); }
             return res.status(200).json(result);
+            // else return res.status(400).json({data:result,message: "Cannot update module" });
         });
     } catch (e) {
         return res.status(500).send(e.message);

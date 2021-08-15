@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
 export type SectionDocument = mongoose.Document & {
+    _id? : string;
+    name: string;
     database_type: string;                //  postgresql
     server: string;                       //  localhost
     port: number;                         //  5432
@@ -9,6 +11,7 @@ export type SectionDocument = mongoose.Document & {
     privileged_account_password :string;  //  halashalas
     application_account: string;          //  apprunuser
     configuration_file: string;           //   /etc/postgresql/13/main/postgresql.conf
+    enabled:boolean;
     
     // comparePassword: comparePasswordFunction;
     // gravatar: (size: number) => string;
@@ -16,6 +19,7 @@ export type SectionDocument = mongoose.Document & {
 
 const SectionSchema = new mongoose.Schema<SectionDocument>(
     {
+        name: String,
         database_type: String,
         server: String,
         port: Number,
@@ -23,8 +27,10 @@ const SectionSchema = new mongoose.Schema<SectionDocument>(
         privileged_account: String,
         privileged_account_password: String,
         application_account: String,
-        configuration_file: String
-    }
+        configuration_file: String,
+        enabled: { type: Boolean, default: true }
+    },
+    { timestamps: true}
 );
 
 

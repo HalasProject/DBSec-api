@@ -14,7 +14,31 @@ import { CallbackError, NativeError } from "mongoose";
 export const one = (req: Request, res: Response,next: NextFunction) => {
     try {
         const id = req.params.id;
-        Test.findById(id, (err: NativeError, test: TestDocument) => {
+        
+        Test.aggregate([
+            {$match: { uuid: id }},
+            { 
+                $lookup:
+                {
+                  from: "sections",
+                  localField: "section_id",
+                  foreignField: "_id",
+                  as: "section"
+                }
+            },
+            {
+                $group: {
+                    "_id":  "$uuid",
+                    "count":{"$sum":1},
+                    "section": {"$first":"$section.database_type"},
+                    "tests": { "$push": "$$ROOT"} 
+                },
+            },
+            {
+                $project: { "tests.section":  0, "tests.uuid": 0},
+            },
+            {   $unwind:"$section"  }
+        ]).exec((err: NativeError, test) => {
             if (err) { return next(err); }
             return res.status(200).json({data: test});
         });
@@ -49,7 +73,6 @@ export const all = async (req: Request, res: Response,next: NextFunction) => {
 export const create = (req: Request, res: Response,next: NextFunction) => {
     const { data } = req.body;
     try {
-        console.log(data);
         Test.create(data, function (err:NativeError, test:TestDocument) {
             if (err) { return next(err); }
             return res.status(200).json({data: test.toJSON()});
@@ -80,20 +103,39 @@ export const destroy = (req: Request, res: Response) => {
 };
 
 /**
-  * Update existing test.
-  * @param  {Request} req
+ * Delete existing test with id.
+ *  @param  {Request} req
   * @param  {Response} res
-  * @param  {NextFunction} next
-*/
- export const update = async (req: Request, res: Response,next: NextFunction) => {
+ */
+ export const groupe = async (req: Request, res: Response) => {
     try {
-        const id  = req.params.id;
-        const { data } = req.body;
-        await Test.updateOne({_id:id},{...data},null,function (err, result) {
-            if (err) { return next(err); }
-            if (result.nModified === 1) return res.status(200).json({data:result,message: "Test updated successfully" });
-            else return res.status(400).json({data:result,message: "Cannot update test" });
+        Test.aggregate([
+            {
+                $lookup: {
+                    from: "sections",
+                    localField: "section_id",
+                    foreignField: "_id",
+                    as: "section"
+                }
+            },
+            {   $unwind:"$section"  },
+            {
+                $group: {
+                    "_id": "$uuid",
+                    "count":{"$sum":1},
+                    "database": {"$first":"$section.database_type"},
+                    "created_at":{"$last":"$createdAt"}
+                }
+            },
+            { $sort: {"created_at":1} }
+        ]).exec(function (err, tests) {
+            if (!err) {
+                return res.status(200).json({ data:tests });
+            } else {
+                return res.status(400).json({ message: "Cannot get tests",error: err.message });
+            }
         });
+
     } catch (e) {
         return res.status(500).send(e.message);
     }
