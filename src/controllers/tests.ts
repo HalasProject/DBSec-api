@@ -13,7 +13,7 @@ import { CallbackError, NativeError } from "mongoose";
  */
 export const one = (req: Request, res: Response,next: NextFunction) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params;
         
         Test.aggregate([
             {$match: { uuid: id }},
@@ -75,7 +75,7 @@ export const create = (req: Request, res: Response,next: NextFunction) => {
     try {
         Test.create(data, function (err:NativeError, test:TestDocument) {
             if (err) { return next(err); }
-            return res.status(200).json({data: test.toJSON()});
+            return res.status(201).json({data: test});
         });
     } catch (e) {
         return res.status(500).send(e.message);
@@ -89,12 +89,32 @@ export const create = (req: Request, res: Response,next: NextFunction) => {
  */
 export const destroy = (req: Request, res: Response) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params;
         Test.remove({ _id: id },(function(err) {
             if (!err) {
                 return res.status(200).json({ message: "Test deleted successfully" });
             } else {
-                return res.status(400).json({ message: "Cannot delete test",error: err.message });
+                return res.status(400).json({ message: "Cannot delete test", error: err.message });
+            }
+        }));
+    } catch (e) {
+        return res.status(500).send(e.message);
+    }
+};
+
+/**
+ * Delete many test uuid.
+ *  @param  {Request} req
+  * @param  {Response} res
+ */
+ export const destroyMany = (req: Request, res: Response) => {
+    try {
+        const {uuid} = req.params;
+        Test.remove({ uuid: uuid },(function(err) {
+            if (!err) {
+                return res.status(200).json({ message: "Tests deleted successfully" });
+            } else {
+                return res.status(400).json({ message: "Cannot delete tests",error: err.message });
             }
         }));
     } catch (e) {

@@ -1,7 +1,7 @@
 "use strict";
 
 import { Response, Request, NextFunction } from "express";
-import { Section,SectionDocument } from "../models/Section";
+import { Instance,InstanceDocument } from "../models/Instance";
 import { CallbackError, NativeError,Query } from "mongoose";
 import { Module,ModuleDocument } from "../models/Module";
 import { Test,TestDocument } from "../models/Test";
@@ -13,31 +13,35 @@ import { nanoid } from "nanoid";
   * @param  {Response} res
   * @param  {NextFunction} next
  */
-export const run = (req: Request, res: Response,next: NextFunction) => {
+export const run = async (req: Request, res: Response,next: NextFunction) => {
     const generatedID = nanoid(10);
     const log:any = {};
     try {
-        const { section_id, test_ids } = req.body;
-        console.log(test_ids);
-        Section.findById(section_id, (err: NativeError, section: SectionDocument) => {
+        const { instance_id, modules_ids } = req.body;
+        Instance.findById(instance_id, (err: NativeError, instance: InstanceDocument) => {
             if (err) { return next(err); }
-            const instance = new Sequelize(section.database,section.privileged_account,section.privileged_account_password,{
-                host: section.server,
-                dialect: section.database_type as Dialect,
+            const instance_conn = new Sequelize(instance.database,instance.privileged_account,instance.privileged_account_password,{
+                host: instance.server,
+                dialect: instance.database_type as Dialect,
             });
-            const modules:Query<ModuleDocument[], ModuleDocument> = Module.find({"_id": { $in: test_ids } ,"enabled": true});
+
+            const modules:Query<ModuleDocument[], ModuleDocument> = Module.find({
+                "_id": { $in: modules_ids } ,
+                "enabled": true,
+                "database.type": instance.database_type
+            });
+
             modules.exec(async (err,modules:ModuleDocument[]) => {
                 if (err) { return next(err); }
-                if (modules.length == 0) { return res.status(200).json({message:"Aucun test na etait trouveé"}); }
+                if (modules.length == 0) { return res.status(404).json({message:"Modules was not found,please make sure you selected the correct ones"}); }
+                
                 const results: Array<any> = [];
                 let passedTest = 0;
                 for (const module of modules){
-                    await instance.query(module.sql).then(async (rows) => {
-                        console.log(rows);
-
+                    await instance_conn.query(module.sql).then(async (rows) => {
                         const testCreated = new Test({
                             uuid: generatedID,
-                            section_id: section._id,
+                            instance_id: instance._id,
                             module_id: module._id,
                             resultat: JSON.stringify(rows)
                         });
@@ -50,7 +54,7 @@ export const run = (req: Request, res: Response,next: NextFunction) => {
                         results.push(testCreated);
                        
                     });
-                    return res.status(200).json({data: [],message:`(${passedTest}/${modules.length}) Test passed !`}); 
+                    return res.status(200).json({data: results,message:`(${passedTest}/${modules.length}) Test passed !`}); 
                 }               
             });
         });

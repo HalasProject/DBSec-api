@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export type SectionDocument = mongoose.Document & {
+export type InstanceDocument = mongoose.Document & {
     _id? : string;
     name: string;
     database_type: string;                //  postgresql
@@ -17,7 +17,7 @@ export type SectionDocument = mongoose.Document & {
     // gravatar: (size: number) => string;
 };
 
-const SectionSchema = new mongoose.Schema<SectionDocument>(
+const InstanceSchema = new mongoose.Schema<InstanceDocument>(
     {
         name: String,
         database_type: String,
@@ -34,4 +34,4 @@ const SectionSchema = new mongoose.Schema<SectionDocument>(
 );
 
 
-export const Section = mongoose.model<SectionDocument>("Section", SectionSchema);
+export const Instance = mongoose.model<InstanceDocument>("Instance", InstanceSchema);

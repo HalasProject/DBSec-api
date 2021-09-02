@@ -1,22 +1,22 @@
 "use strict";
 
 import { Response, Request, NextFunction } from "express";
-import { Section,SectionDocument } from "../models/Section";
+import { Instance,InstanceDocument } from "../models/Instance";
 import { CallbackError, NativeError } from "mongoose";
 
 
 /**
- * Display information of one section.
+ * Display information of one instance.
  *  @param  {Request} req
   * @param  {Response} res
   * @param  {NextFunction} next
  */
 export const one = (req: Request, res: Response,next: NextFunction) => {
     try {
-        const id = req.params.id;
-        Section.findById(id, (err: NativeError, section: SectionDocument) => {
+        const { id } = req.params;
+        Instance.findById(id, (err: NativeError, instance: InstanceDocument) => {
             if (err) { return next(err); }
-            return res.status(200).json(section);
+            return res.status(200).json(instance);
         });
             
     } catch (e) {
@@ -25,15 +25,26 @@ export const one = (req: Request, res: Response,next: NextFunction) => {
 };
 
 /**
- * List all sections;
+ * List all instances with search query;
  * @param  {Request} req
  * @param  {Response} res
+ * @param  {NextFunction} next
 */
 export const all = async (req: Request, res: Response,next: NextFunction)  => {
+    const { query } = req;
     try {
-        Section.find({}, (err, sections:SectionDocument[]) => {
+        let querys:any = {};
+        if ("search" in query){
+            querys = [];
+            querys.push(
+                {name : RegExp(`^${query.search}`,"i")},
+                {database_type: RegExp(`^${query.search}`,"i") }
+            );
+            querys = { $or: querys};
+        }
+        Instance.find(querys, (err, instances:InstanceDocument[]) => {
             if (err) { return next(err); }
-            return res.status(200).json({ data: sections });
+            return res.status(200).json({ data: instances });
         });
     } catch (e) {
         return res.status(500).send(e.message);
@@ -41,7 +52,7 @@ export const all = async (req: Request, res: Response,next: NextFunction)  => {
 };
 
 /**
- * Create new section.
+ * Create new instance.
  *  @param  {Request} req
   * @param  {Response} res
   * @param  {NextFunction} next
@@ -49,9 +60,9 @@ export const all = async (req: Request, res: Response,next: NextFunction)  => {
 export const create = (req: Request, res: Response,next: NextFunction) => {
     const { data } = req.body;
     try {
-        Section.create(data, function (err:NativeError, section:SectionDocument) {
+        Instance.create(data, function (err:NativeError, instance:InstanceDocument) {
             if (err) { return next(err); }
-            return res.status(200).json(section);
+            return res.status(201).json(instance);
         });
     } catch (e) {
         return res.status(500).send(e.message);
@@ -59,18 +70,18 @@ export const create = (req: Request, res: Response,next: NextFunction) => {
 };
 
 /**
- * Delete existing section with id.
+ * Delete existing instance with id.
  *  @param  {Request} req
   * @param  {Response} res
  */
 export const destroy = (req: Request, res: Response) => {
     try {
-        const id = req.params.id;
-        Section.remove({ _id: id },(function(err) {
+        const { id } = req.params;
+        Instance.remove({ _id: id },(function(err) {
             if (!err) {
-                return res.status(200).json({ message: "Section deleted successfully" });
+                return res.status(200).json({ message: "Instance deleted successfully" });
             } else {
-                return res.status(400).json({ message: "Cannot delete section",error: err.message });
+                return res.status(400).json({ message: "Cannot delete instance",error: err.message });
             }
         }));
     } catch (e) {
@@ -79,16 +90,16 @@ export const destroy = (req: Request, res: Response) => {
 };
 
 /**
-  * Update existing section.
+  * Update existing instance.
   * @param  {Request} req
   * @param  {Response} res
   * @param  {NextFunction} next
 */
  export const update = async (req: Request, res: Response,next: NextFunction) => {
     try {
-        const id  = req.params.id;
+        const { id }  = req.params;
         const { data } = req.body;
-        await Section.findOneAndUpdate({_id:id},{...data},{new: true},function (err, result) {
+        await Instance.findOneAndUpdate({_id:id},{...data},{new: true},function (err, result) {
             if (err) { return next(err); }
             return res.status(200).json(result);
         });

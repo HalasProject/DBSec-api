@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 export type TestDocument = mongoose.Document & {
+    _id? : string;
     uuid: string,
     section_id: string,
     module_id: string,

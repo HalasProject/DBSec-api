@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 export type ModuleDocument = mongoose.Document & {
+    _id? : string;
     title: string;
     description?: string;
     

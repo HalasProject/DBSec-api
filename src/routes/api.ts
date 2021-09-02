@@ -1,8 +1,9 @@
 import express from "express";
 import * as testController from "../controllers/tests";
-import * as sectionController from "../controllers/section";
+import * as instanceController from "../controllers/instance";
 import * as runnerController from "../controllers/runner";
 import * as moduleController from "../controllers/module";
+import * as dashboardController from "../controllers/dashboard";
 
 const routes = express.Router();
 
@@ -42,6 +43,13 @@ routes.get("/test/:id", testController.one);
  */
 routes.delete("/test/:id", testController.destroy);
 
+/**
+ * Delete many test with uuid.
+ * @route DELETE /api/tests/:uuid
+ */
+routes.delete("/tests/:uuid", testController.destroyMany);
+
+
 /*
 * * Module Resource API
 * * * * * * * * * * * * * * */
@@ -78,42 +86,48 @@ routes.delete("/test/:id", testController.destroy);
 
  
 /*
-* * Section Resource API
+* * Instance Resource API
 * * * * * * * * * * * * * * */
 
 /* *
-  * List all avaiable section;
-  * @route GET /api/sections
+  * List all avaiable instance;
+  * @route GET /api/instances
   */
-routes.get("/sections", sectionController.all);
+routes.get("/instances", instanceController.all);
 
  /**
-  * Show information of a specific section with id.
-  * @route GET /api/section
+  * Show information of a specific instance with id.
+  * @route GET /api/instance
   */
-routes.get("/section/:id", sectionController.one);
+routes.get("/instance/:id", instanceController.one);
  
 /**
-  * Create a new section.
-  * @route POST /api/section
+  * Create a new instance.
+  * @route POST /api/instance
   */
-routes.post("/section", sectionController.create);
+routes.post("/instance", instanceController.create);
  
 /**
-  * Update a specific section with id.
-  * @route PUT /api/section/:id
+  * Update a specific instance with id.
+  * @route PUT /api/instance/:id
   */
-routes.put("/section/:id", sectionController.update);
+routes.put("/instance/:id", instanceController.update);
  
 /**
-  * Delete a specific section with id.
-  * @route DELETE /api/section/:id
+  * Delete a specific instance with id.
+  * @route DELETE /api/instance/:id
   */
-routes.delete("/section/:id", sectionController.destroy);
+routes.delete("/instance/:id", instanceController.destroy);
 
 /*
 * * Runner API
 * * * * * * * * * * * * * * */
 
 routes.post("/runner", runnerController.run);
+
+/*
+* * Dashboard API
+* * * * * * * * * * * * * * */
+
+routes.get("/statistique",dashboardController.statistique);
 export default routes;
