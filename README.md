@@ -3,9 +3,8 @@ The main purpose of this repository is to show a working Node.js API Server + fr
 
 It is not a goal to be a comprehensive and definitive guide to making a TypeScript and Node project, but as a working reference maintained by the community. If you are interested in starting a new TypeScript project - check out the bootstrapping tools reference in [the TypeScript Website](https://www.typescriptlang.org/docs/home.html)
 
-
-[![Dependency Status](https://david-dm.org/HalasProject/DBSec-api.svg)](https://david-dm.org/HalasProject/DBSec-api) [![Build Status](https://travis-ci.org/HalasProject/DBSec-api.svg?branch=master)](https://travis-ci.org/HalasProject/DBSec-api)
-
+[![Dependency Status](https://david-dm.org/HalasProject/DBSec-api.svg)](https://david-dm.org/HalasProject/DBSec-api) 
+[![Build Status](https://app.travis-ci.com/HalasProject/DBSec-api.svg?token=ZnyTEz6pNWSzgVHyX9fm&branch=master)](https://app.travis-ci.com/HalasProject/DBSec-api)
 ![image](https://i.ibb.co/HtWgk9H/Flowchart-4.jpg)
 
 
