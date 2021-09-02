@@ -1,15 +1,12 @@
-# TypeScript Node Starter
-
+# DBSec API
 The main purpose of this repository is to show a working Node.js API Server + front-end project and workflow for writing Node code in TypeScript.
 
 It is not a goal to be a comprehensive and definitive guide to making a TypeScript and Node project, but as a working reference maintained by the community. If you are interested in starting a new TypeScript project - check out the bootstrapping tools reference in [the TypeScript Website](https://www.typescriptlang.org/docs/home.html)
 
 
-[![Dependency Status](https://david-dm.org/Microsoft/TypeScript-Node-Starter.svg)](https://david-dm.org/Microsoft/TypeScript-Node-Starter) [![Build Status](https://travis-ci.org/Microsoft/TypeScript-Node-Starter.svg?branch=master)](https://travis-ci.org/Microsoft/TypeScript-Node-Starter)
+[![Dependency Status](https://david-dm.org/HalasProject/DBSec-api.svg)](https://david-dm.org/HalasProject/DBSec-api) [![Build Status](https://travis-ci.org/HalasProject/DBSec-api.svg?branch=master)](https://travis-ci.org/HalasProject/DBSec-api)
 
-**Live Demo**: [https://typescript-node-starter.azurewebsites.net/](https://typescript-node-starter.azurewebsites.net/)
-
-![image](https://user-images.githubusercontent.com/820883/36764267-abbdb7f8-1be0-11e8-9678-2a9ea448d7f8.png)
+![image](https://i.ibb.co/HtWgk9H/Flowchart-4.jpg)
 
 
 # Table of contents:
@@ -41,14 +38,14 @@ To build and run this app locally you will need a few things:
 # Getting started
 - Clone the repository
 ```
-git clone --depth=1 https://github.com/Microsoft/TypeScript-Node-Starter.git <project_name>
+git clone --depth=1 https://github.com/HalasProject/DBSec-api <project_name>
 ```
 - Install dependencies
 ```
 cd <project_name>
 npm install
 ```
-- Configure your mongoDB server
+- Configure your mongoDB server 
 ```bash
 # create the db directory
 sudo mkdir -p /data/db
@@ -66,6 +63,9 @@ mongod
 
 # on macOS 10.15 or above the db directory is under home directory
 mongod --dbpath ~/data/db
+
+# with npm
+npm run mongod
 ```
 - Build and run the project
 ```
@@ -79,7 +79,7 @@ Throughout the README We will try to call out specific places where VS Code real
 
 Finally, navigate to `http://localhost:3000` and you should see the template being served and rendered locally!
 
-# Deploying the app
+# Deploying DBSec
 There are many ways to deploy a Node app, and in general, nothing about the deployment process changes because you're using TypeScript.
 In this section, I'll walk you through how to deploy this app to Azure App Service using the extensions available in VS Code because I think it is the easiest and fastest way to get started, as well as the most friendly workflow from a developer's perspective.
 
@@ -120,68 +120,6 @@ After rebuilding/serving, the app should work, but users that were previously cr
 Don't forget to return the `MONGO_URI_LOCAL` to your local test database (if you so desire).
 
 You can find **more information** about how to get started with Atlas [here](https://docs.atlas.mongodb.com/getting-started/).
-
-### SendGrid Account
-1. Navigate to [SendGrid's Website](https://sendgrid.com/), sign up for a free account, and complete the verification process.
-2. Open your `.env` file and update `SENDGRID_USERNAME` and `SENDGRID_PASSWORD` with your SendGrid username and password respectively.
-
-## Deploying to Azure App Service
-Deploying from VS Code can be broken into the following steps:
-1. Authenticate your Azure account in VS Code
-2. Build your app
-3. Zip deploy using the Azure App Service extension
-
-### Sign in to your Azure account
-1. Open VS Code
-2. Expand the Azure App Service menu in the explorer menu
-    - If you don't see this, you might not have the `Azure App Service` extension installed.
-    See the pre-reqs section.
-3. Click `Sign in to Azure...`
-4. Choose `Copy & Open` from the resulting dialog
-    - This will open `aka.ms/devicelogin` in a browser window.
-    If it doesn't, just navigate there manually.
-5. Paste in the code that is on your clipboard.
-6. Go back to VS Code, you should now be signed in.
-You can confirm that everything worked by seeing your Azure subscription listed in the Azure App Service section of the explorer window.
-Additionally, you should see the email associated with your account listed in the status bar at the bottom of VS Code.
-
-### Build the app
-Building the app locally is required to generate a zip to deploy because the App Service won't execute build tasks.
-Build the app however you normally would:
-- `ctrl + shift + b` - kicks off default build in VS Code
-- execute `npm run build` from a terminal window
-
-### Zip deploy from VS Code
-1. Make sure your app is built, whatever is currently in your `dist` and `node_modules` folders will be the app that is deployed.
-2. Click the blue up arrow (Deploy to Web App) on the Azure App Service section of the explorer window.
-3. Choose the entire project directory.
-If you haven't changed the name, this will be `TypeScript-Node-Starter`.
-4. Choose the subscription you want this app to be billed to (don't worry, it will be free).
-5. Choose `Create New Web App`
-6. Enter a globally unique name -
-This will be part of the URL that azure generates, so it has to be unique, but if you're planning on adding a custom domain later, it's not that important. I usually just add random numbers to the end of the app name, ie. typescript-node-starter-15121214.
-7. Choose a resource group -
-If you don't know what this is, just create a new one.
-If you have lots of cloud resources that should be logically grouped together (think an app service, and a database that supports that app) then you would want to put them in the same resource group.
-This can always be updated later though.
-If you create a new resource group, you'll also be prompted to pick a location for that group.
-Pick something geographically close to where your users are.
-8. Choose `Create new App Service Plan` -
-An app service plan mainly is what determines the size and cost of the hardware your app will run on, but it also manages some other settings which we can ignore for now.
-9. Choose `B1 - Basic` - This one is free.
-If you know what you're doing, feel free to select a stronger pricing tier.
-10. Choose your target node runtime version - We are deploying to Linux machines, and in addition we can choose the exact node runtime we want.
-If you don't know what you want, choose whatever the current LTS build is.
-11. Grab a cup of coffee - You'll see everything you just selected getting created in the output window.
-All of this is powered by the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/overview?view=azure-cli-latest) and can be easily replicated if you decide you want to customize this process.
-This deployment is not the fastest option (but it is the easiest!). We are literally bundling everything in your project (including the massive node_modules folder) and uploading it to our Azure app service. Times will vary, but as a baseline, my deployment took roughly 6 minutes.
-12. Add `NODE_ENV` environment variable - In the App Service section of the explorer window, expand the newly created service, right click on **Application Settings**, select **Add New Settings...**, and add `NODE_ENV` as the key and `production` as the value.
-This setting determines which database to point to.
-If you haven't created a cloud database yet, see [the setup instructions](#Create a managed MongoDB with MongoLab).
-13. Profit! If everything worked you should see a page that looks like this: [TypeScript Node Starter Demo Site](https://typescript-node-starter.azurewebsites.net/)
-
-### Troubleshooting failed deployments
-Deployment can fail for various reasons, if you get stuck with a page that says *Service Unavailable* or some other error, [open an issue](https://github.com/Microsoft/TypeScript-Node-Starter/issues/new) and I'll try to help you resolve the problems.
 
 # TypeScript + Node
 In the next few sections I will call out everything that changes when adding TypeScript to an Express project.
@@ -570,29 +508,26 @@ In that file you'll find two sections:
 
 | Package                         | Description                                                           |
 | ------------------------------- | --------------------------------------------------------------------- |
-| async                           | Utility library that provides asynchronous control flow.               |
+| async                           | Utility library that provides asynchronous control flow.              |
 | bcrypt-nodejs                   | Library for hashing and salting user passwords.                       |
 | bluebird                        | Promise library                                                       |
 | body-parser                     | Express 4 middleware.                                                 |
 | compression                     | Express 4 middleware.                                                 |
 | connect-mongo                   | MongoDB session store for Express.                                    |
-| dotenv                          | Loads environment variables from .env file.                            |
+| dotenv                          | Loads environment variables from .env file.                           |
 | errorhandler                    | Express 4 middleware.                                                 |
 | express                         | Node.js web framework.                                                |
-| express-flash                    | Provides flash messages for Express.                                   |
+| express-flash                   | Provides flash messages for Express.                                  |
 | express-session                 | Express 4 middleware.                                                 |
 | express-validator               | Easy form validation for Express.                                     |
 | fbgraph                         | Facebook Graph API library.                                           |
 | lodash                          | General utility library.                                              |
 | lusca                           | CSRF middleware.                                                      |
 | mongoose                        | MongoDB ODM.                                                          |
+| sequelize                       | ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server     |
 | nodemailer                      | Node.js library for sending emails.                                   |
-| passport                        | Simple and elegant authentication library for node.js                 |
-| passport-facebook               | Sign-in with Facebook plugin.                                         |
-| passport-local                  | Sign-in with Username and Password plugin.                            |
-| pug (jade)                      | Template engine for Express.                                          |
-| request                         | Simplified HTTP request library.                                       |
-| request-promise                 | Promisified HTTP request library. Let's us use async/await             |
+| request                         | Simplified HTTP request library.                                      |
+| request-promise                 | Promisified HTTP request library. Let's us use async/await            |
 | winston                         | Logging library                                                       |
 
 ## `devDependencies`
@@ -613,9 +548,6 @@ In that file you'll find two sections:
 
 To install or update these dependencies you can use `npm install` or `npm update`.
 
-# Hackathon Starter Project
-A majority of this quick start's content was inspired or adapted from Sahat's excellent [Hackathon Starter project](https://github.com/sahat/hackathon-starter).
-
 ## License
-Copyright (c) Microsoft Corporation. All rights reserved.
+Copyright (c) HalasProject. All rights reserved.
 Licensed under the [MIT](LICENSE) License.
