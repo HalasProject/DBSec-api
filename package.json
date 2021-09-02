@@ -1,12 +1,12 @@
 {
-    "name": "express-typescript-starter",
-    "version": "0.1.0",
-    "description": "A starting point for Node.js express apps with TypeScript",
+    "name": "dbsec-api",
+    "version": "1.0.0",
+    "description": "DBSec - Automate Security of Databases",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Microsoft/TypeScript-Node-Starter"
+        "url": "https://github.com/HalasProject/DBSec-api"
     },
-    "author": "Bowden Kelly",
+    "author": "Salah Bentayeb",
     "license": "MIT",
     "scripts": {
         "build-sass": "sass src/public/css/main.scss dist/public/css/main.css",
