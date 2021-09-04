@@ -1,12 +1,28 @@
+
+<p align="center">
+<a href="https://app.getpostman.com/run-collection/5247189-c5ea517c-3e25-4026-b821-00171b99d3d7?action=collection%2Ffork&collection-url=entityId%3D5247189-c5ea517c-3e25-4026-b821-00171b99d3d7%26entityType%3Dcollection%26workspaceId%3De1fd0a0e-8321-49ad-b891-80644c511cce#?env%5BDBSec%5D=W3sia2V5IjoiYXBpX3VybCIsInZhbHVlIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL2FwaSIsImVuYWJsZWQiOnRydWV9XQ==">
+    <img alt="Run in Postman" src="https://run.pstmn.io/button.svg">
+</a>
+<br><br>
+<a href="https://david-dm.org/HalasProject/DBSec-api">
+    <img alt="Dependency Status" src="https://david-dm.org/HalasProject/DBSec-api.svg">
+</a>
+
+<a href="https://app.travis-ci.com/HalasProject/DBSec-api">
+    <img src="https://app.travis-ci.com/HalasProject/DBSec-api.svg?token=ZnyTEz6pNWSzgVHyX9fm&branch=master">
+</a>
+</p>
+
 # DBSec API
-The main purpose of this repository is to show a working Node.js API Server + front-end project and workflow for writing Node code in TypeScript.
+DBSec is a web application framework for developers, database administrators, analysts and peoples working in IT security sector, it allows to prepare modules and run them on DBs (MySQL, SQLite, PostgreSQL , MSSQL, MariaDB) with the possibility of creating several instances.
 
-It is not a goal to be a comprehensive and definitive guide to making a TypeScript and Node project, but as a working reference maintained by the community. If you are interested in starting a new TypeScript project - check out the bootstrapping tools reference in [the TypeScript Website](https://www.typescriptlang.org/docs/home.html)
+## Architecture:
 
-[![Dependency Status](https://david-dm.org/HalasProject/DBSec-api.svg)](https://david-dm.org/HalasProject/DBSec-api) 
-[![Build Status](https://app.travis-ci.com/HalasProject/DBSec-api.svg?token=ZnyTEz6pNWSzgVHyX9fm&branch=master)](https://app.travis-ci.com/HalasProject/DBSec-api)
-![image](https://i.ibb.co/HtWgk9H/Flowchart-4.jpg)
+DBSec is composed of two parts the client interface (Front) created with Angular & Typescript which consumes the API (Back) realized with NodeJS & Typescript, the data is stored in a document oriented database (mongoDB).
 
+<p align="center">
+ <img src="https://i.ibb.co/HtWgk9H/Flowchart-4.jpg">
+</p>
 
 # Table of contents:
 
