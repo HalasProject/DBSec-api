@@ -85,7 +85,7 @@ export const create = (req: Request, res: Response,next: NextFunction) => {
 export const destroy = (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        Module.remove({ _id: id },(function(err) {
+        Module.findByIdAndRemove(id,{}, (function(err) {
             if (!err) {
                 return res.status(200).json({ message: "Module deleted successfully" });
             } else {
@@ -107,7 +107,7 @@ export const destroy = (req: Request, res: Response) => {
     try {
         const { id }  = req.params;
         const { data } = req.body;
-        await Module.findOneAndUpdate({_id:id},{...data},{new: true},function (err, result) {
+        await Module.findByIdAndUpdate(id,{...data},{new: true},function (err, result) {
             if (err) { return next(err); }
             return res.status(200).json(result);
             // else return res.status(400).json({data:result,message: "Cannot update module" });

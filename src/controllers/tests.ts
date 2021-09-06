@@ -20,24 +20,24 @@ export const one = (req: Request, res: Response,next: NextFunction) => {
             { 
                 $lookup:
                 {
-                  from: "sections",
-                  localField: "section_id",
+                  from: "instances",
+                  localField: "instance_id",
                   foreignField: "_id",
-                  as: "section"
+                  as: "instance"
                 }
             },
             {
                 $group: {
                     "_id":  "$uuid",
                     "count":{"$sum":1},
-                    "section": {"$first":"$section.database_type"},
+                    "instance": {"$first":"$instance.database_type"},
                     "tests": { "$push": "$$ROOT"} 
                 },
             },
             {
-                $project: { "tests.section":  0, "tests.uuid": 0},
+                $project: { "tests.instance":  0, "tests.uuid": 0},
             },
-            {   $unwind:"$section"  }
+            {   $unwind:"$instance"  }
         ]).exec((err: NativeError, test) => {
             if (err) { return next(err); }
             return res.status(200).json({data: test});
@@ -90,7 +90,7 @@ export const create = (req: Request, res: Response,next: NextFunction) => {
 export const destroy = (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        Test.remove({ _id: id },(function(err) {
+        Test.findByIdAndRemove(id, {}, (function(err) {
             if (!err) {
                 return res.status(200).json({ message: "Test deleted successfully" });
             } else {
@@ -132,18 +132,18 @@ export const destroy = (req: Request, res: Response) => {
         Test.aggregate([
             {
                 $lookup: {
-                    from: "sections",
-                    localField: "section_id",
+                    from: "instances",
+                    localField: "instance_id",
                     foreignField: "_id",
-                    as: "section"
+                    as: "instance"
                 }
             },
-            {   $unwind:"$section"  },
+            {   $unwind:"$instance"  },
             {
                 $group: {
                     "_id": "$uuid",
                     "count":{"$sum":1},
-                    "database": {"$first":"$section.database_type"},
+                    "database": {"$first":"$instance.database_type"},
                     "created_at":{"$last":"$createdAt"}
                 }
             },

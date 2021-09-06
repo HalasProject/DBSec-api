@@ -13,48 +13,60 @@ import { NativeError } from "mongoose";
 export const statistique = async (req: Request, res: Response,next: NextFunction) => {
     
     try {
-        const modules_nbr = await Module.count({enabled:true}).exec();
-        const instances_nbr = await Instance.count().exec();
-        const tests_nbr = await Test.aggregate([{
+        const modulesTotal = await Module.count({enabled:true}).exec();
+        const instancesTotal = await Instance.count().exec();
+        const testsTotal: [] = await Test.aggregate([{
             $group: {
                 "_id":  "$uuid",
                 "count":{"$sum":1}
             }
         }]).exec();
         
-        const module_dist = await Module.aggregate([
+        const moduleDistribution = await Module.aggregate([
             {
                 $group: {
                     "_id":  "$database.type",
                     "count":{"$sum":1}
-                }
+                },
             }
         ]).exec(); 
 
-        const test_dist = await Test.aggregate([
+        const testsDistribution = await Test.aggregate([
             { 
                 $lookup:
                 {
-                  from: "sections",
-                  localField: "section_id",
+                  from: "instances",
+                  localField: "instance_id",
                   foreignField: "_id",
-                  as: "section"
+                  as: "instance"
                 }
             },
             {
                 $group: {
-                    "_id":  {
+                    "_id": {
                         "uuid":"$uuid",
-                        "database":"$section.database_type"
+                        "instance":"$instance.database_type"
                     },
                     "count":{"$sum":1},
-                    "database": {"$first":"$section.database_type"},
-                   
+                    "database": {"$first":"$instance.database_type"},
                 }
             },
-            {   $unwind:"$database"  }
+            { $unwind:"$database"}, 
+            { $project: {"database":1, "total":"$count", _id: 0}},
+            {
+                $group: {
+                    "_id": {
+                        "database":"$database",
+                    },
+                    "count":{"$sum":1},
+                    "database": {"$first":"$database"},
+                }
+            },
+            { $project: {"database":1, "total":"$count", _id: 0}},
         ]).exec(); 
-        return res.status(200).json({ instances_nbr,modules_nbr,tests_nbr, module_dist,test_dist});
+
+        const lastTestTime = (await Test.findOne().sort({createdAt:-1}).select("createdAt").limit(1)).createdAt;
+        return res.status(200).json({ instancesTotal,modulesTotal,...{testsTotal:testsTotal.length}, testsDistribution, moduleDistribution, lastTestTime});
     } catch (e) {
         return res.status(500).send(e.message);
     }

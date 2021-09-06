@@ -3,6 +3,7 @@
 import { Response, Request, NextFunction } from "express";
 import { Instance,InstanceDocument } from "../models/Instance";
 import { CallbackError, NativeError } from "mongoose";
+import { ObjectID } from "mongodb";
 
 
 /**
@@ -42,7 +43,7 @@ export const all = async (req: Request, res: Response,next: NextFunction)  => {
             );
             querys = { $or: querys};
         }
-        Instance.find(querys, (err, instances:InstanceDocument[]) => {
+        Instance.find(querys).sort({'createdAt':-1}).exec(function(err, instances:InstanceDocument[]){
             if (err) { return next(err); }
             return res.status(200).json({ data: instances });
         });
@@ -77,13 +78,13 @@ export const create = (req: Request, res: Response,next: NextFunction) => {
 export const destroy = (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        Instance.remove({ _id: id },(function(err) {
+        Instance.findByIdAndRemove(id,{}, function(err) {
             if (!err) {
                 return res.status(200).json({ message: "Instance deleted successfully" });
             } else {
                 return res.status(400).json({ message: "Cannot delete instance",error: err.message });
             }
-        }));
+        });
     } catch (e) {
         return res.status(500).send(e.message);
     }
@@ -99,7 +100,7 @@ export const destroy = (req: Request, res: Response) => {
     try {
         const { id }  = req.params;
         const { data } = req.body;
-        await Instance.findOneAndUpdate({_id:id},{...data},{new: true},function (err, result) {
+        await Instance.findByIdAndUpdate(id,{...data},{new: true},function (err, result) {
             if (err) { return next(err); }
             return res.status(200).json(result);
         });
