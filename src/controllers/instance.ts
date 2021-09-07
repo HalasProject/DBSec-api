@@ -3,8 +3,6 @@
 import { Response, Request, NextFunction } from "express";
 import { Instance,InstanceDocument } from "../models/Instance";
 import { CallbackError, NativeError } from "mongoose";
-import { ObjectID } from "mongodb";
-
 
 /**
  * Display information of one instance.
@@ -43,7 +41,7 @@ export const all = async (req: Request, res: Response,next: NextFunction)  => {
             );
             querys = { $or: querys};
         }
-        Instance.find(querys).sort({'createdAt':-1}).exec(function(err, instances:InstanceDocument[]){
+        Instance.find(querys).sort({"createdAt":-1}).exec(function(err, instances:InstanceDocument[]){
             if (err) { return next(err); }
             return res.status(200).json({ data: instances });
         });

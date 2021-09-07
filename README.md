@@ -42,7 +42,6 @@ DBSec is composed of two parts the client interface (Front) created with Angular
 - [Dependencies](#dependencies)
 	- [`dependencies`](#dependencies)
 	- [`devDependencies`](#devdependencies)
-- [Hackathon Starter Project](#hackathon-starter-project)
 
 # Pre-reqs
 To build and run this app locally you will need a few things:
@@ -107,9 +106,6 @@ The Azure free tier gives you plenty of resources to play around with including 
 For local development, running MongoDB on localhost is fine, however once we deploy we need a database with high availability.
 The easiest way to achieve this is by using a managed cloud database.
 There are many different providers, but the easiest one to get started with is [MongoDB Atlas](#create-a-managed-mongodb-with-atlas).
-- **SendGrid Account** -
-If you don't have one, you can sign up for free, we will need it to send emails. There are many different providers that Nodemailer supports ([Well-known services](https://nodemailer.com/smtp/well-known/)), we'll be using [SendGrid](#sendgrid-account).
-
 ### Create a managed MongoDB with Atlas
 1. Navigate to [MongoDB's website](https://www.mongodb.com/cloud/atlas), sign up for a free account, and then log in.
 2. After creating the account, enter the organization name, project name, and select your preferred language (JavaScript).
@@ -183,6 +179,7 @@ The full folder structure of this app is explained below:
 | tsconfig.tests.json      | Config settings for compiling tests written in TypeScript                                     |
 | .eslintrc                | Config settings for ESLint code style checking                                                |
 | .eslintignore            | Config settings for paths to exclude from linting                                             |
+| .czrc                    | Commitizen config file                                             |
 
 ## Building the project
 It is rare for JavaScript projects not to have some kind of build pipeline these days, however Node projects typically have the least amount of build configuration.
@@ -327,9 +324,6 @@ If you want to invest some time into making a great `.d.ts` file that will give 
 The reason it's so easy to get great `.d.ts` files for most libraries is that developers like you contribute their work back to DefinitelyTyped.
 Contributing `.d.ts` files is a great way to get into the open source community if it's something you've never tried before, and as soon as your changes are accepted, every other developer in the world has access to your work.
 
-If you're interested in giving it a shot, check out the [guidance on DefinitelyTyped](https://github.com/definitelyTyped/DefinitelyTyped/#how-can-i-contribute).
-If you're not interested, [you should tell me why](https://www.surveymonkey.com/r/LN2CV82) so we can help make it easier in the future!
-
 ### Summary of `.d.ts` management
 In general if you stick to the following steps you should have minimal `.d.ts` issues;
 1. After installing any npm package as a dependency or dev dependency, immediately try to install the `.d.ts` file via `@types`.
@@ -345,7 +339,6 @@ If not, continue to step 5.
 declare module "<some-library>";
 ```
 7. At this point everything should compile with no errors, and you can either improve the types in the `.d.ts` file by following this [guide on authoring `.d.ts` files](http://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html) or continue with no types.
-8. If you are still having issues, let me know by emailing me or pinging me on twitter, I will help you.
 
 ## Debugging
 Debugging TypeScript is exactly like debugging JavaScript with one caveat, you need source maps.
@@ -483,7 +476,6 @@ Note this will also generate a coverage report.
 
 ### Writing tests
 Writing tests for web apps has entire books dedicated to it and best practices are strongly influenced by personal style, so I'm deliberately avoiding discussing how or when to write tests in this guide.
-However, if prescriptive guidance on testing is something that you're interested in, [let me know](https://www.surveymonkey.com/r/LN2CV82), I'll do some homework and get back to you.
 
 ## ESLint
 ESLint is a code linter which mainly helps catch quickly minor code quality and style issues.
@@ -507,8 +499,6 @@ If you are interested in seeing ESLint feedback as soon as possible, I strongly 
 ### VSCode Extensions
 
 To enhance your development experience while working in VSCode we also provide you a list of the suggested extensions for working with this project:
-
-![Suggested Extensions In VSCode](https://user-images.githubusercontent.com/14539/34583539-6f290a30-f198-11e7-8804-30f40d418e20.png)
 
 - [VS Code ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
@@ -564,5 +554,7 @@ In that file you'll find two sections:
 To install or update these dependencies you can use `npm install` or `npm update`.
 
 ## License
-Copyright (c) HalasProject. All rights reserved.
+DBSec was created from Microsoft [TypeScript-Node-Starter](https://github.com/microsoft/TypeScript-Node-Starter)
+
+Copyright (c) Microsoft Corporation. All rights reserved.
 Licensed under the [MIT](LICENSE) License.

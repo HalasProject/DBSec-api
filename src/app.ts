@@ -10,13 +10,11 @@ import bluebird from "bluebird";
 import cors from "cors";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
-// Controllers (route handlers)
-import * as contactController from "./controllers/contact";
-
 import apiRoutes from "./routes/api";
 
 // Create Express server
 const app = express();
+
 // Connect to MongoDB
 const mongoUrl = MONGODB_URI;
 mongoose.Promise = bluebird;
@@ -32,7 +30,6 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useCreateIndex: true, useUni
 app.use(cors());
 app.set("port", process.env.PORT || 3000);
 app.set("views", path.join(__dirname, "../views"));
-app.set("view engine", "pug");
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -56,12 +53,6 @@ app.use(lusca.xssProtection(true));
 app.use(
     express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
 );
-
-/**
- * Primary app routes.
- */
-app.get("/contact", contactController.getContact);
-app.post("/contact", contactController.postContact);
 
 /**
  * API examples routes.
