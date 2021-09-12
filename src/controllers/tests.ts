@@ -26,21 +26,33 @@ export const one = (req: Request, res: Response,next: NextFunction) => {
                   as: "instance"
                 }
             },
+            { 
+                $lookup:
+                {
+                  from: "modules",
+                  localField: "module_id",
+                  foreignField: "_id",
+                  as: "module"
+                }
+            },
+            {   $unwind:"$module"  },
             {
                 $group: {
                     "_id":  "$uuid",
                     "count":{"$sum":1},
                     "instance": {"$first":"$instance.database_type"},
-                    "tests": { "$push": "$$ROOT"} 
+                    "instanceName": {"$first":"$instance.name"},
+                    "tests": { "$push": "$$ROOT"}
                 },
             },
             {
-                $project: { "tests.instance":  0, "tests.uuid": 0},
+                $project: { "tests.instance":  0, "tests.uuid": 0, "tests.module_id": 0},
             },
-            {   $unwind:"$instance"  }
+            {   $unwind:"$instance"  },
+            {   $unwind:"$instanceName"  },
         ]).exec((err: NativeError, test) => {
             if (err) { return next(err); }
-            return res.status(200).json({data: test});
+            return res.status(200).json({data: test[0]});
         });
             
     } catch (e) {
@@ -143,11 +155,12 @@ export const destroy = (req: Request, res: Response) => {
                 $group: {
                     "_id": "$uuid",
                     "count":{"$sum":1},
+                    "instanceName": {"$first":"$instance.name"},
                     "database": {"$first":"$instance.database_type"},
                     "created_at":{"$last":"$createdAt"}
                 }
             },
-            { $sort: {"created_at":1} }
+            { $sort: {"created_at":-1} }
         ]).exec(function (err, tests) {
             if (!err) {
                 return res.status(200).json({ data:tests });

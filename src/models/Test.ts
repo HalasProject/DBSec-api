@@ -6,6 +6,7 @@ export type TestDocument = mongoose.Document & {
     instance_id: string,
     module_id: string,
     resultat: string,
+    error: boolean,
     createdAt: Date
 };
 
@@ -23,6 +24,7 @@ const TestSchema = new mongoose.Schema<TestDocument>(
             index: true
         },
         resultat: String,
+        error: { type: Boolean, default: false }
     },
     { timestamps: true},
 );

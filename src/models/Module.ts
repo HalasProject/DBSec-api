@@ -37,7 +37,8 @@ const ModuleSchema = new mongoose.Schema<ModuleDocument>(
         database: {
             type: String,
             version: String
-        }
+        },
+        readMore: String
     },
     { timestamps: true, typeKey: "$type"},
 );

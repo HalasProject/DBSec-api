@@ -37,7 +37,7 @@ export const run = async (req: Request, res: Response,next: NextFunction) => {
                 
                 const results: Array<any> = [];
                 let passedTest = 0;
-                for (const module of modules){
+                for await (const module of modules){
                     await instance_conn.query(module.sql).then(async (rows) => {
                         const testCreated = new Test({
                             uuid: generatedID,
@@ -45,17 +45,32 @@ export const run = async (req: Request, res: Response,next: NextFunction) => {
                             module_id: module._id,
                             resultat: JSON.stringify(rows)
                         });
+                        
 
-                        testCreated.save(async function (err) {
+                        testCreated.save(function (err) {
                             if (err) { return next(err); }
-                            passedTest++;
+                        });
+                        
+                        results.push(testCreated);
+                        passedTest++;
+                    }).catch(function (err) {
+                        const testCreated = new Test({
+                            uuid: generatedID,
+                            instance_id: instance._id,
+                            module_id: module._id,
+                            error: true,
+                            resultat: JSON.stringify(err)
                         });
 
+                        testCreated.save(function (err) {
+                            if (err) { return next(err); }
+                        });
+                        
                         results.push(testCreated);
-                       
+                        
                     });
-                    return res.status(200).json({data: results,message:`(${passedTest}/${modules.length}) Test passed !`}); 
                 }               
+                return res.status(200).json({ data: results, message: `(${passedTest}/${modules.length}) Test passed !` }); 
             });
         });
     } catch (e) {
